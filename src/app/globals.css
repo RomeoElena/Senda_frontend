@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+:root {
+  /* Fondos */
+  --color-bg: #f7f5f2;
+  --color-surface: #eeeae4;
+  --color-border: #e2ddd6;
+
+  /* Marca */
+  --color-primary: #3d6b5e;
+  --color-primary-hover: #5c8f80;
+  --color-primary-light: #a8c5bc;
+
+  /* Texto */
+  --color-text: #2c2825;
+  --color-text-muted: #7a6f68;
+
+  /* Estados prendas */
+  --color-nuevo: #e6f4ee;
+  --color-nuevo-text: #1a6641;
+  --color-usado: #eeeae4;
+  --color-usado-text: #7a6f68;
+  --color-donar: #fdf3e0;
+  --color-donar-text: #7a4d00;
+  --color-reciclar: #fdecea;
+  --color-reciclar-text: #7a1f1f;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Utilidades globales */
+.btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.btn-secondary {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-border);
+}
+
+.card {
+  background-color: var(--color-surface);
+  border-radius: 12px;
+  border: 0.5px solid var(--color-border);
+  overflow: hidden;
+}
+
+.pill {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 10px;
+  border-radius: 99px;
+}
+
+.pill-nuevo {
+  background: var(--color-nuevo);
+  color: var(--color-nuevo-text);
+}
+.pill-usado {
+  background: var(--color-usado);
+  color: var(--color-usado-text);
+  border: 1px solid var(--color-border);
+}
+.pill-donar {
+  background: var(--color-donar);
+  color: var(--color-donar-text);
+}
+.pill-reciclar {
+  background: var(--color-reciclar);
+  color: var(--color-reciclar-text);
+}
