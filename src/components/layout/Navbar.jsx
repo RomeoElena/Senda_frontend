@@ -19,7 +19,7 @@ export default function Navbar() {
           maxWidth: "1200px",
           margin: "0 auto",
           padding: "0 16px",
-          height: "56px",
+          height: "70px",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -29,7 +29,7 @@ export default function Navbar() {
         <Link
           href="/"
           style={{
-            fontSize: "18px",
+            fontSize: "37px",
             fontWeight: "600",
             color: "#F7F5F2",
             textDecoration: "none",
@@ -57,7 +57,7 @@ export default function Navbar() {
                 <Link
                   href={link.href}
                   style={{
-                    fontSize: "14px",
+                    fontSize: "25px",
                     fontWeight: isActive ? "500" : "400",
                     color: isActive ? "#F7F5F2" : "var(--color-primary-light)",
                     textDecoration: "none",

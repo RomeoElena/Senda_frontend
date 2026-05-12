@@ -13,7 +13,7 @@
 
   /* Texto */
   --color-text: #2c2825;
-  --color-text-muted: #7a6f68;
+  --color-text-muted: #5c5550;
 
   /* Estados prendas */
   --color-nuevo: #e6f4ee;
@@ -103,6 +103,27 @@ body {
 .pill-reciclar {
   background: var(--color-reciclar);
   color: var(--color-reciclar-text);
+}
+/* Accesibilidad — tamaños mínimos */
+small,
+.text-sm {
+  font-size: 12px;
+}
+
+/* Mejorar legibilidad general */
+p,
+li,
+span {
+  line-height: 1.6;
+}
+
+/* Focus visible para teclado */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 @media (min-width: 640px) {
   main {
