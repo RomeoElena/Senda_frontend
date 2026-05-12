@@ -303,7 +303,6 @@ export default function CircularPage() {
                   alt={`Fotografía de ${prenda.nombre}, tipo ${prenda.tipo}`}
                   fill
                   style={{ objectFit: "cover" }}
-                  unoptimized
                 />
                 {/* Badge estado */}
                 <div

@@ -300,7 +300,6 @@ export default function OutfitsPage() {
                           alt={`Fotografía de ${prenda.nombre}`}
                           fill
                           style={{ objectFit: "cover" }}
-                          unoptimized
                         />
                         {seleccionada && (
                           <div
@@ -569,7 +568,6 @@ export default function OutfitsPage() {
                           alt={`Fotografía de ${prenda.nombre}`}
                           fill
                           style={{ objectFit: "cover" }}
-                          unoptimized
                         />
                       </div>
                       <div

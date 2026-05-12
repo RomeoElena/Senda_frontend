@@ -269,7 +269,6 @@ export default function ArmarioPage() {
                   alt={`Fotografía de ${prenda.nombre}, tipo ${prenda.tipo}`}
                   fill
                   style={{ objectFit: "cover" }}
-                  unoptimized
                 />
               </div>
 
