@@ -2,8 +2,9 @@ import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 
 export const metadata = {
-  title: "Senda — Tu armario inteligente",
-  description: "Gestión de armario sostenible y consciente",
+  title: "Senda — Tu armario digital",
+  description:
+    "Gestiona tu armario personal de forma inteligente. Organiza prendas, crea outfits y contribuye a la economía circular.",
 };
 
 export const viewport = {
