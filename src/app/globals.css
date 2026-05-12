@@ -104,3 +104,14 @@ body {
   background: var(--color-reciclar);
   color: var(--color-reciclar-text);
 }
+@media (min-width: 640px) {
+  main {
+    padding: 32px 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+}
