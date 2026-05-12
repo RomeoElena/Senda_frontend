@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 const FILTROS_TIPO = [
   "Todas",
@@ -43,14 +44,12 @@ export default function ArmarioPage() {
     fetchPrendas();
   }, [fetchPrendas]);
 
-  const eliminarPrenda = async (id) => {
-    if (!confirm("¿Segura que quieres eliminar esta prenda?")) return;
+  const eliminarPrenda = async (id, nombre) => {
+    if (!confirm(`¿Segura que quieres eliminar "${nombre}"?`)) return;
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/prendas/${id}`,
-        {
-          method: "DELETE",
-        },
+        { method: "DELETE" },
       );
       if (!res.ok) throw new Error("Error al eliminar");
       setPrendas(prendas.filter((p) => p._id !== id));
@@ -60,8 +59,8 @@ export default function ArmarioPage() {
   };
 
   return (
-    <div>
-      {/* Cabecera */}
+    <main>
+      {/* Intro */}
       <div
         style={{
           display: "flex",
@@ -81,13 +80,17 @@ export default function ArmarioPage() {
           >
             Mi armario
           </h1>
-          <p style={{ fontSize: "14px", color: "var(--color-text-muted)" }}>
+          <p
+            aria-live="polite"
+            style={{ fontSize: "14px", color: "var(--color-text-muted)" }}
+          >
             {prendas.length} {prendas.length === 1 ? "prenda" : "prendas"}{" "}
             registradas
           </p>
         </div>
-        <a
+        <Link
           href="/armario/nueva"
+          aria-label="Añadir nueva prenda al armario"
           style={{
             backgroundColor: "var(--color-primary)",
             color: "white",
@@ -100,86 +103,108 @@ export default function ArmarioPage() {
           }}
         >
           + Añadir prenda
-        </a>
+        </Link>
       </div>
 
       {/* Filtros tipo */}
-      <div
-        style={{
-          display: "flex",
-          gap: "8px",
-          marginBottom: "12px",
-          flexWrap: "wrap",
-        }}
-      >
-        {FILTROS_TIPO.map((tipo) => (
-          <button
-            key={tipo}
-            onClick={() => setFiltroTipo(tipo)}
-            style={{
-              fontSize: "13px",
-              padding: "6px 14px",
-              borderRadius: "99px",
-              border:
-                filtroTipo === tipo ? "none" : "1px solid var(--color-border)",
-              backgroundColor:
-                filtroTipo === tipo
-                  ? "var(--color-primary)"
-                  : "var(--color-surface)",
-              color: filtroTipo === tipo ? "white" : "var(--color-text-muted)",
-              cursor: "pointer",
-              fontWeight: filtroTipo === tipo ? "500" : "400",
-              transition: "all 0.2s ease",
-            }}
-          >
-            {tipo}
-          </button>
-        ))}
-      </div>
+      <nav aria-label="Filtrar por tipo de prenda">
+        <div
+          role="group"
+          aria-label="Tipos de prenda"
+          style={{
+            display: "flex",
+            gap: "8px",
+            marginBottom: "12px",
+            flexWrap: "wrap",
+          }}
+        >
+          {FILTROS_TIPO.map((tipo) => (
+            <button
+              key={tipo}
+              onClick={() => setFiltroTipo(tipo)}
+              aria-pressed={filtroTipo === tipo}
+              aria-label={`Filtrar por tipo: ${tipo}`}
+              style={{
+                fontSize: "13px",
+                padding: "6px 14px",
+                borderRadius: "99px",
+                border:
+                  filtroTipo === tipo
+                    ? "none"
+                    : "1px solid var(--color-border)",
+                backgroundColor:
+                  filtroTipo === tipo
+                    ? "var(--color-primary)"
+                    : "var(--color-surface)",
+                color:
+                  filtroTipo === tipo ? "white" : "var(--color-text-muted)",
+                cursor: "pointer",
+                fontWeight: filtroTipo === tipo ? "500" : "400",
+                transition: "all 0.2s ease",
+              }}
+            >
+              {tipo}
+            </button>
+          ))}
+        </div>
+      </nav>
 
       {/* Filtros estado */}
-      <div
-        style={{
-          display: "flex",
-          gap: "8px",
-          marginBottom: "28px",
-          flexWrap: "wrap",
-        }}
-      >
-        {FILTROS_ESTADO.map((estado) => (
-          <button
-            key={estado}
-            onClick={() => setFiltroEstado(estado)}
-            style={{
-              fontSize: "12px",
-              padding: "4px 12px",
-              borderRadius: "99px",
-              border:
-                filtroEstado === estado
-                  ? "none"
-                  : "1px solid var(--color-border)",
-              backgroundColor:
-                filtroEstado === estado ? "var(--color-text)" : "transparent",
-              color:
-                filtroEstado === estado ? "white" : "var(--color-text-muted)",
-              cursor: "pointer",
-              transition: "all 0.2s ease",
-            }}
-          >
-            {estado}
-          </button>
-        ))}
-      </div>
+      <nav aria-label="Filtrar por estado de prenda">
+        <div
+          role="group"
+          aria-label="Estados de prenda"
+          style={{
+            display: "flex",
+            gap: "8px",
+            marginBottom: "28px",
+            flexWrap: "wrap",
+          }}
+        >
+          {FILTROS_ESTADO.map((estado) => (
+            <button
+              key={estado}
+              onClick={() => setFiltroEstado(estado)}
+              aria-pressed={filtroEstado === estado}
+              aria-label={`Filtrar por estado: ${estado}`}
+              style={{
+                fontSize: "12px",
+                padding: "4px 12px",
+                borderRadius: "99px",
+                border:
+                  filtroEstado === estado
+                    ? "none"
+                    : "1px solid var(--color-border)",
+                backgroundColor:
+                  filtroEstado === estado ? "var(--color-text)" : "transparent",
+                color:
+                  filtroEstado === estado ? "white" : "var(--color-text-muted)",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+              }}
+            >
+              {estado}
+            </button>
+          ))}
+        </div>
+      </nav>
 
-      {/* Estados de carga y error */}
+      {/* Estado de carga */}
       {cargando && (
-        <p style={{ color: "var(--color-text-muted)", fontSize: "14px" }}>
+        <p
+          role="status"
+          aria-live="polite"
+          style={{ color: "var(--color-text-muted)", fontSize: "14px" }}
+        >
           Cargando prendas...
         </p>
       )}
 
+      {/* Error */}
       {error && (
         <div
+          role="alert"
+          aria-live="assertive"
           style={{
             backgroundColor: "var(--color-reciclar)",
             color: "var(--color-reciclar-text)",
@@ -193,7 +218,7 @@ export default function ArmarioPage() {
         </div>
       )}
 
-      {/* Grid de prendas */}
+      {/* Armario vacío */}
       {!cargando && !error && prendas.length === 0 && (
         <div
           style={{
@@ -211,106 +236,115 @@ export default function ArmarioPage() {
         </div>
       )}
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-          gap: "16px",
-        }}
-      >
-        {prendas.map((prenda) => (
-          <div
-            key={prenda._id}
-            style={{
-              backgroundColor: "var(--color-surface)",
-              borderRadius: "12px",
-              border: "0.5px solid var(--color-border)",
-              overflow: "hidden",
-            }}
-          >
-            {/* Imagen */}
-            <div
+      {/* Grid de prendas */}
+      <section aria-label="Lista de prendas">
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+            gap: "16px",
+          }}
+        >
+          {prendas.map((prenda) => (
+            <article
+              key={prenda._id}
+              aria-label={`Prenda: ${prenda.nombre}`}
               style={{
-                height: "160px",
-                backgroundColor: "var(--color-border)",
-                position: "relative",
+                backgroundColor: "var(--color-surface)",
+                borderRadius: "12px",
+                border: "0.5px solid var(--color-border)",
+                overflow: "hidden",
               }}
             >
-              <Image
-                src={prenda.imagen || "https://via.placeholder.com/200x160"}
-                alt={prenda.nombre}
-                fill
-                style={{ objectFit: "cover" }}
-                unoptimized
-              />
-            </div>
-
-            {/* Info */}
-            <div style={{ padding: "12px" }}>
-              <p
+              {/* Imagen */}
+              <div
                 style={{
-                  fontSize: "14px",
-                  fontWeight: "500",
-                  color: "var(--color-text)",
-                  marginBottom: "4px",
+                  height: "160px",
+                  backgroundColor: "var(--color-border)",
+                  position: "relative",
                 }}
               >
-                {prenda.nombre}
-              </p>
-              <p
-                style={{
-                  fontSize: "12px",
-                  color: "var(--color-primary-hover)",
-                  marginBottom: "8px",
-                }}
-              >
-                {prenda.tipo}
-              </p>
-
-              {/* Pill estado */}
-              <span className={`pill pill-${prenda.estado}`}>
-                {prenda.estado}
-              </span>
-
-              {/* Acciones */}
-              <div style={{ display: "flex", gap: "8px", marginTop: "12px" }}>
-                <a
-                  href={`/armario/${prenda._id}`}
-                  style={{
-                    flex: 1,
-                    textAlign: "center",
-                    fontSize: "12px",
-                    padding: "6px",
-                    borderRadius: "6px",
-                    backgroundColor: "var(--color-primary-light)",
-                    color: "var(--color-primary)",
-                    textDecoration: "none",
-                    fontWeight: "500",
-                  }}
-                >
-                  Editar
-                </a>
-                <button
-                  onClick={() => eliminarPrenda(prenda._id)}
-                  style={{
-                    flex: 1,
-                    fontSize: "12px",
-                    padding: "6px",
-                    borderRadius: "6px",
-                    backgroundColor: "var(--color-reciclar)",
-                    color: "var(--color-reciclar-text)",
-                    border: "none",
-                    cursor: "pointer",
-                    fontWeight: "500",
-                  }}
-                >
-                  Eliminar
-                </button>
+                <Image
+                  src={prenda.imagen || "https://via.placeholder.com/200x160"}
+                  alt={`Fotografía de ${prenda.nombre}, tipo ${prenda.tipo}`}
+                  fill
+                  style={{ objectFit: "cover" }}
+                  unoptimized
+                />
               </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+
+              {/* Información */}
+              <div style={{ padding: "12px" }}>
+                <p
+                  style={{
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    color: "var(--color-text)",
+                    marginBottom: "4px",
+                  }}
+                >
+                  {prenda.nombre}
+                </p>
+                <p
+                  style={{
+                    fontSize: "12px",
+                    color: "var(--color-primary-hover)",
+                    marginBottom: "8px",
+                  }}
+                >
+                  {prenda.tipo}
+                </p>
+
+                {/* estado */}
+                <span
+                  className={`pill pill-${prenda.estado}`}
+                  aria-label={`Estado: ${prenda.estado}`}
+                >
+                  {prenda.estado}
+                </span>
+
+                {/* Acciones */}
+                <div style={{ display: "flex", gap: "8px", marginTop: "12px" }}>
+                  <Link
+                    href={`/armario/${prenda._id}`}
+                    aria-label={`Editar prenda ${prenda.nombre}`}
+                    style={{
+                      flex: 1,
+                      textAlign: "center",
+                      fontSize: "12px",
+                      padding: "6px",
+                      borderRadius: "6px",
+                      backgroundColor: "var(--color-primary-light)",
+                      color: "var(--color-primary)",
+                      textDecoration: "none",
+                      fontWeight: "500",
+                    }}
+                  >
+                    Editar
+                  </Link>
+                  <button
+                    onClick={() => eliminarPrenda(prenda._id, prenda.nombre)}
+                    aria-label={`Eliminar prenda ${prenda.nombre}`}
+                    style={{
+                      flex: 1,
+                      fontSize: "12px",
+                      padding: "6px",
+                      borderRadius: "6px",
+                      backgroundColor: "var(--color-reciclar)",
+                      color: "var(--color-reciclar-text)",
+                      border: "none",
+                      cursor: "pointer",
+                      fontWeight: "500",
+                    }}
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    </main>
   );
 }
