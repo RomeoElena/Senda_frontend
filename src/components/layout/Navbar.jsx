@@ -18,8 +18,8 @@ export default function Navbar() {
         style={{
           maxWidth: "1200px",
           margin: "0 auto",
-          padding: "0 24px",
-          height: "60px",
+          padding: "0 16px",
+          height: "56px",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -29,11 +29,12 @@ export default function Navbar() {
         <Link
           href="/"
           style={{
-            fontSize: "20px",
+            fontSize: "18px",
             fontWeight: "600",
             color: "#F7F5F2",
             textDecoration: "none",
             letterSpacing: "0.12em",
+            flexShrink: 0,
           }}
         >
           SENDA
@@ -43,8 +44,10 @@ export default function Navbar() {
         <ul
           style={{
             display: "flex",
-            gap: "32px",
+            gap: "24px",
             listStyle: "none",
+            margin: 0,
+            padding: 0,
           }}
         >
           {navLinks.map((link) => {
@@ -58,9 +61,11 @@ export default function Navbar() {
                     fontWeight: isActive ? "500" : "400",
                     color: isActive ? "#F7F5F2" : "var(--color-primary-light)",
                     textDecoration: "none",
-                    borderBottom: isActive ? "1.5px solid #F7F5F2" : "none",
+                    borderBottom: isActive
+                      ? "1.5px solid #F7F5F2"
+                      : "1.5px solid transparent",
                     paddingBottom: "2px",
-                    transition: "color 0.2s ease",
+                    transition: "color 0.2s ease, border-color 0.2s ease",
                   }}
                 >
                   {link.label}
