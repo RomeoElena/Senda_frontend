@@ -47,7 +47,7 @@ export default function OutfitsPage() {
     fetchPrendas();
   }, [fetchOutfits, fetchPrendas]);
 
-  const togglePrenda = (id) => {
+  const togglePrenda = (id, nombre) => {
     setFormData((prev) => ({
       ...prev,
       prendas: prev.prendas.includes(id)
@@ -80,8 +80,8 @@ export default function OutfitsPage() {
     }
   };
 
-  const eliminarOutfit = async (id) => {
-    if (!confirm("¿Segura que quieres eliminar este outfit?")) return;
+  const eliminarOutfit = async (id, nombre) => {
+    if (!confirm(`¿Segura que quieres eliminar el outfit "${nombre}"?`)) return;
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/outfits/${id}`,
@@ -116,7 +116,7 @@ export default function OutfitsPage() {
   };
 
   return (
-    <div>
+    <main>
       {/* Cabecera */}
       <div
         style={{
@@ -137,13 +137,23 @@ export default function OutfitsPage() {
           >
             Mis outfits
           </h1>
-          <p style={{ fontSize: "14px", color: "var(--color-text-muted)" }}>
+          <p
+            aria-live="polite"
+            style={{ fontSize: "14px", color: "var(--color-text-muted)" }}
+          >
             {outfits.length} {outfits.length === 1 ? "conjunto" : "conjuntos"}{" "}
             guardados
           </p>
         </div>
         <button
           onClick={() => setMostrarFormulario(!mostrarFormulario)}
+          aria-expanded={mostrarFormulario}
+          aria-controls="formulario-outfit"
+          aria-label={
+            mostrarFormulario
+              ? "Cancelar creación de outfit"
+              : "Crear nuevo outfit"
+          }
           style={{
             backgroundColor: mostrarFormulario
               ? "var(--color-surface)"
@@ -165,7 +175,9 @@ export default function OutfitsPage() {
 
       {/* Formulario para crear outfit */}
       {mostrarFormulario && (
-        <div
+        <section
+          id="formulario-outfit"
+          aria-label="Formulario para crear nuevo outfit"
           style={{
             backgroundColor: "var(--color-surface)",
             borderRadius: "12px",
@@ -184,12 +196,17 @@ export default function OutfitsPage() {
           >
             Nuevo outfit
           </h2>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} noValidate>
             {/* Nombre */}
             <div style={{ marginBottom: "16px" }}>
               <label style={labelStyle} htmlFor="nombre">
                 Nombre{" "}
-                <span style={{ color: "var(--color-reciclar-text)" }}>*</span>
+                <span
+                  aria-hidden="true"
+                  style={{ color: "var(--color-reciclar-text)" }}
+                >
+                  *
+                </span>
               </label>
               <input
                 id="nombre"
@@ -199,6 +216,7 @@ export default function OutfitsPage() {
                   setFormData({ ...formData, nombre: e.target.value })
                 }
                 placeholder="Ej: Look de oficina"
+                aria-required="true"
                 style={inputStyle}
               />
             </div>
@@ -222,10 +240,15 @@ export default function OutfitsPage() {
 
             {/* Selección de prendas */}
             <div style={{ marginBottom: "20px" }}>
-              <label style={labelStyle}>
+              <p
+                id="prendas-label"
+                style={{ ...labelStyle, marginBottom: "8px" }}
+              >
                 Prendas del outfit ({formData.prendas.length} seleccionadas)
-              </label>
+              </p>
               <div
+                role="group"
+                aria-labelledby="prendas-label"
                 style={{
                   display: "grid",
                   gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))",
@@ -240,7 +263,17 @@ export default function OutfitsPage() {
                   return (
                     <div
                       key={prenda._id}
-                      onClick={() => togglePrenda(prenda._id)}
+                      onClick={() => togglePrenda(prenda._id, prenda.nombre)}
+                      role="checkbox"
+                      aria-checked={seleccionada}
+                      aria-label={`${seleccionada ? "Quitar" : "Añadir"} ${prenda.nombre} del outfit`}
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          togglePrenda(prenda._id, prenda.nombre);
+                        }
+                      }}
                       style={{
                         borderRadius: "8px",
                         border: seleccionada
@@ -264,13 +297,14 @@ export default function OutfitsPage() {
                             prenda.imagen ||
                             "https://via.placeholder.com/120x80"
                           }
-                          alt={prenda.nombre}
+                          alt={`Fotografía de ${prenda.nombre}`}
                           fill
                           style={{ objectFit: "cover" }}
                           unoptimized
                         />
                         {seleccionada && (
                           <div
+                            aria-hidden="true"
                             style={{
                               position: "absolute",
                               top: "4px",
@@ -322,6 +356,7 @@ export default function OutfitsPage() {
             <button
               type="submit"
               disabled={guardando}
+              aria-busy={guardando}
               style={{
                 width: "100%",
                 padding: "12px",
@@ -339,12 +374,14 @@ export default function OutfitsPage() {
               {guardando ? "Guardando..." : "Guardar outfit"}
             </button>
           </form>
-        </div>
+        </section>
       )}
 
       {/* Error */}
       {error && (
         <div
+          role="alert"
+          aria-live="assertive"
           style={{
             backgroundColor: "var(--color-reciclar)",
             color: "var(--color-reciclar-text)",
@@ -360,7 +397,11 @@ export default function OutfitsPage() {
 
       {/* Cargando */}
       {cargando && (
-        <p style={{ color: "var(--color-text-muted)", fontSize: "14px" }}>
+        <p
+          role="status"
+          aria-live="polite"
+          style={{ color: "var(--color-text-muted)", fontSize: "14px" }}
+        >
           Cargando outfits...
         </p>
       )}
@@ -384,162 +425,181 @@ export default function OutfitsPage() {
       )}
 
       {/* Lista de outfits */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-        {outfits.map((outfit) => (
-          <div
-            key={outfit._id}
-            style={{
-              backgroundColor: "var(--color-surface)",
-              borderRadius: "12px",
-              border: outfit.favorito
-                ? "1.5px solid var(--color-primary)"
-                : "0.5px solid var(--color-border)",
-              padding: "20px",
-            }}
-          >
-            {/* Cabecera del outfit */}
-            <div
+      <section aria-label="Lista de outfits">
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+          {outfits.map((outfit) => (
+            <article
+              key={outfit._id}
+              aria-label={`Outfit: ${outfit.nombre}${outfit.favorito ? ", marcado como favorito" : ""}`}
               style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "flex-start",
-                marginBottom: "16px",
+                backgroundColor: "var(--color-surface)",
+                borderRadius: "12px",
+                border: outfit.favorito
+                  ? "1.5px solid var(--color-primary)"
+                  : "0.5px solid var(--color-border)",
+                padding: "20px",
               }}
             >
-              <div>
-                <div
-                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
-                >
-                  <h3
-                    style={{
-                      fontSize: "16px",
-                      fontWeight: "500",
-                      color: "var(--color-text)",
-                    }}
-                  >
-                    {outfit.nombre}
-                  </h3>
-                  {outfit.favorito && (
-                    <span
-                      style={{
-                        fontSize: "11px",
-                        fontWeight: "500",
-                        color: "var(--color-primary)",
-                        backgroundColor: "var(--color-primary-light)",
-                        padding: "2px 8px",
-                        borderRadius: "99px",
-                      }}
-                    >
-                      Favorito
-                    </span>
-                  )}
-                </div>
-                {outfit.descripcion && (
-                  <p
-                    style={{
-                      fontSize: "13px",
-                      color: "var(--color-text-muted)",
-                      marginTop: "2px",
-                    }}
-                  >
-                    {outfit.descripcion}
-                  </p>
-                )}
-                <p
-                  style={{
-                    fontSize: "12px",
-                    color: "var(--color-primary-hover)",
-                    marginTop: "4px",
-                  }}
-                >
-                  {outfit.prendas?.length || 0}{" "}
-                  {outfit.prendas?.length === 1 ? "prenda" : "prendas"}
-                </p>
-              </div>
-              <div style={{ display: "flex", gap: "8px" }}>
-                <button
-                  onClick={() => toggleFavorito(outfit)}
-                  style={{
-                    fontSize: "12px",
-                    padding: "6px 12px",
-                    borderRadius: "6px",
-                    border: "1px solid var(--color-border)",
-                    backgroundColor: "transparent",
-                    color: "var(--color-text-muted)",
-                    cursor: "pointer",
-                  }}
-                >
-                  {outfit.favorito ? "Quitar favorito" : "Añadir favorito"}
-                </button>
-                <button
-                  onClick={() => eliminarOutfit(outfit._id)}
-                  style={{
-                    fontSize: "12px",
-                    padding: "6px 12px",
-                    borderRadius: "6px",
-                    border: "none",
-                    backgroundColor: "var(--color-reciclar)",
-                    color: "var(--color-reciclar-text)",
-                    cursor: "pointer",
-                  }}
-                >
-                  Eliminar
-                </button>
-              </div>
-            </div>
-
-            {/* Prendas del outfit */}
-            {outfit.prendas?.length > 0 && (
-              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                {outfit.prendas.map((prenda) => (
+              {/* Cabecera del outfit */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
+                  marginBottom: "16px",
+                }}
+              >
+                <div>
                   <div
-                    key={prenda._id}
                     style={{
-                      width: "72px",
-                      borderRadius: "8px",
-                      overflow: "hidden",
-                      border: "0.5px solid var(--color-border)",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
                     }}
                   >
-                    <div
+                    <h3
                       style={{
-                        height: "72px",
-                        backgroundColor: "var(--color-border)",
-                        position: "relative",
+                        fontSize: "16px",
+                        fontWeight: "500",
+                        color: "var(--color-text)",
                       }}
                     >
-                      <Image
-                        src={prenda.imagen || "https://via.placeholder.com/72"}
-                        alt={prenda.nombre}
-                        fill
-                        style={{ objectFit: "cover" }}
-                        unoptimized
-                      />
-                    </div>
-                    <div
-                      style={{ padding: "4px 6px", backgroundColor: "white" }}
-                    >
-                      <p
+                      {outfit.nombre}
+                    </h3>
+                    {outfit.favorito && (
+                      <span
+                        aria-label="Outfit favorito"
                         style={{
-                          fontSize: "10px",
-                          color: "var(--color-text)",
+                          fontSize: "11px",
                           fontWeight: "500",
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
+                          color: "var(--color-primary)",
+                          backgroundColor: "var(--color-primary-light)",
+                          padding: "2px 8px",
+                          borderRadius: "99px",
                         }}
                       >
-                        {prenda.nombre}
-                      </p>
-                    </div>
+                        Favorito
+                      </span>
+                    )}
                   </div>
-                ))}
+                  {outfit.descripcion && (
+                    <p
+                      style={{
+                        fontSize: "13px",
+                        color: "var(--color-text-muted)",
+                        marginTop: "2px",
+                      }}
+                    >
+                      {outfit.descripcion}
+                    </p>
+                  )}
+                  <p
+                    style={{
+                      fontSize: "12px",
+                      color: "var(--color-primary-hover)",
+                      marginTop: "4px",
+                    }}
+                  >
+                    {outfit.prendas?.length || 0}{" "}
+                    {outfit.prendas?.length === 1 ? "prenda" : "prendas"}
+                  </p>
+                </div>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <button
+                    onClick={() => toggleFavorito(outfit)}
+                    aria-pressed={outfit.favorito}
+                    aria-label={`${outfit.favorito ? "Quitar de" : "Añadir a"} favoritos el outfit ${outfit.nombre}`}
+                    style={{
+                      fontSize: "12px",
+                      padding: "6px 12px",
+                      borderRadius: "6px",
+                      border: "1px solid var(--color-border)",
+                      backgroundColor: "transparent",
+                      color: "var(--color-text-muted)",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {outfit.favorito ? "Quitar favorito" : "Añadir favorito"}
+                  </button>
+                  <button
+                    onClick={() => eliminarOutfit(outfit._id, outfit.nombre)}
+                    aria-label={`Eliminar outfit ${outfit.nombre}`}
+                    style={{
+                      fontSize: "12px",
+                      padding: "6px 12px",
+                      borderRadius: "6px",
+                      border: "none",
+                      backgroundColor: "var(--color-reciclar)",
+                      color: "var(--color-reciclar-text)",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Eliminar
+                  </button>
+                </div>
               </div>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
+
+              {/* Prendas del outfit */}
+              {outfit.prendas?.length > 0 && (
+                <div
+                  aria-label={`Prendas del outfit ${outfit.nombre}`}
+                  style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}
+                >
+                  {outfit.prendas.map((prenda) => (
+                    <div
+                      key={prenda._id}
+                      style={{
+                        width: "72px",
+                        borderRadius: "8px",
+                        overflow: "hidden",
+                        border: "0.5px solid var(--color-border)",
+                      }}
+                    >
+                      <div
+                        style={{
+                          height: "72px",
+                          backgroundColor: "var(--color-border)",
+                          position: "relative",
+                        }}
+                      >
+                        <Image
+                          src={
+                            prenda.imagen || "https://via.placeholder.com/72"
+                          }
+                          alt={`Fotografía de ${prenda.nombre}`}
+                          fill
+                          style={{ objectFit: "cover" }}
+                          unoptimized
+                        />
+                      </div>
+                      <div
+                        style={{
+                          padding: "4px 6px",
+                          backgroundColor: "white",
+                        }}
+                      >
+                        <p
+                          style={{
+                            fontSize: "10px",
+                            color: "var(--color-text)",
+                            fontWeight: "500",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                        >
+                          {prenda.nombre}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </article>
+          ))}
+        </div>
+      </section>
+    </main>
   );
 }
 
