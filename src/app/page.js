@@ -53,7 +53,7 @@ export default function HomePage() {
             letterSpacing: "-0.02em",
           }}
         >
-          Bienvenida a Senda
+          Tu armario digital
         </h1>
         <p
           style={{
@@ -62,8 +62,8 @@ export default function HomePage() {
             lineHeight: "1.6",
           }}
         >
-          Tu armario inteligente y sostenible. Gestiona tus prendas, crea
-          outfits y contribuye a la economía circular.
+          Gestiona tus prendas, crea looks personalizados y guarda tus favoritos
+          en una experiencia digital diseñada para prolongar la vida de tu ropa.
         </p>
       </div>
 
