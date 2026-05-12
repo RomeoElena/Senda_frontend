@@ -156,7 +156,6 @@ export default function NuevaPrendaPage() {
                 alt="Preview"
                 fill
                 style={{ objectFit: "cover" }}
-                unoptimized
               />
             ) : (
               <div
