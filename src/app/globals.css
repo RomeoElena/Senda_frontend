@@ -167,3 +167,16 @@ select:focus-visible {
     display: none !important;
   }
 }
+@media (max-width: 640px) {
+  .nav-links-desktop {
+    display: none !important;
+  }
+  .hamburger-btn {
+    display: flex !important;
+  }
+
+  /* Añade esto */
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}

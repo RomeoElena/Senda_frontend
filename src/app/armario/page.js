@@ -239,9 +239,10 @@ export default function ArmarioPage() {
       {/* Grid de prendas */}
       <section aria-label="Lista de prendas">
         <div
+          className="cards-grid"
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
             gap: "16px",
           }}
         >
@@ -259,7 +260,7 @@ export default function ArmarioPage() {
               {/* Imagen */}
               <div
                 style={{
-                  height: "160px",
+                  height: "180px",
                   backgroundColor: "var(--color-border)",
                   position: "relative",
                 }}
@@ -287,14 +288,14 @@ export default function ArmarioPage() {
                 <p
                   style={{
                     fontSize: "12px",
-                    color: "var(--color-primary-hover)",
+                    color: "var(--color-text-muted)",
                     marginBottom: "8px",
                   }}
                 >
                   {prenda.tipo}
                 </p>
 
-                {/* estado */}
+                {/* Estado */}
                 <span
                   className={`pill pill-${prenda.estado}`}
                   aria-label={`Estado: ${prenda.estado}`}
