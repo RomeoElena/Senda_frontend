@@ -273,9 +273,10 @@ export default function CircularPage() {
       {/* Grid de prendas */}
       <section aria-label="Lista de prendas para circular">
         <div
+          className="cards-grid"
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
             gap: "16px",
           }}
         >
@@ -293,7 +294,7 @@ export default function CircularPage() {
               {/* Imagen */}
               <div
                 style={{
-                  height: "160px",
+                  height: "180px",
                   backgroundColor: "var(--color-border)",
                   position: "relative",
                 }}
@@ -334,7 +335,7 @@ export default function CircularPage() {
                 <p
                   style={{
                     fontSize: "12px",
-                    color: "var(--color-primary-hover)",
+                    color: "var(--color-text-muted)",
                     marginBottom: "12px",
                   }}
                 >
