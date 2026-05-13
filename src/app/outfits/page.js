@@ -495,7 +495,7 @@ export default function OutfitsPage() {
                   <p
                     style={{
                       fontSize: "12px",
-                      color: "var(--color-primary-hover)",
+                      color: "var(--color-text-muted)",
                       marginTop: "4px",
                     }}
                   >
@@ -503,7 +503,7 @@ export default function OutfitsPage() {
                     {outfit.prendas?.length === 1 ? "prenda" : "prendas"}
                   </p>
                 </div>
-                <div style={{ display: "flex", gap: "8px" }}>
+                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                   <button
                     onClick={() => toggleFavorito(outfit)}
                     aria-pressed={outfit.favorito}
