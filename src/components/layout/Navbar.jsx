@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 
@@ -50,15 +51,30 @@ export default function Navbar() {
         <Link
           href="/"
           style={{
-            fontSize: "24px",
-            fontWeight: "600",
-            color: "#F7F5F2",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
             textDecoration: "none",
-            letterSpacing: "0.12em",
-            flexShrink: 0,
           }}
         >
-          SENDA
+          <Image
+            src="/logo.png"
+            alt="Senda logo"
+            width={40}
+            height={40}
+            style={{ borderRadius: "6px" }}
+          />
+          <span
+            className="logo-text"
+            style={{
+              fontSize: "24px",
+              fontWeight: "600",
+              color: "#F7F5F2",
+              letterSpacing: "0.12em",
+            }}
+          >
+            SENDA
+          </span>
         </Link>
 
         {/* Links — desktop */}

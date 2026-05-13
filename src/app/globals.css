@@ -1,4 +1,10 @@
 @import "tailwindcss";
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
 
 :root {
   /* Fondos */
@@ -32,7 +38,10 @@
   padding: 0;
 }
 
+html,
 body {
+  overflow-x: hidden;
+  max-width: 100vw;
   background-color: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
@@ -104,13 +113,14 @@ body {
   background: var(--color-reciclar);
   color: var(--color-reciclar-text);
 }
+
 /* Accesibilidad — tamaños mínimos */
 small,
 .text-sm {
   font-size: 12px;
 }
 
-/* Mejorar legibilidad general */
+/* Legibilidad general */
 p,
 li,
 span {
@@ -126,18 +136,7 @@ select:focus-visible {
   outline-offset: 2px;
 }
 
-@media (min-width: 640px) {
-  main {
-    padding: 32px 24px;
-  }
-}
-
-@media (max-width: 480px) {
-  body {
-    font-size: 14px;
-  }
-}
-/* Ocultar por defecto en desktop el menu burgue */
+/* Navbar */
 .hamburger-btn {
   display: none;
 }
@@ -153,30 +152,30 @@ select:focus-visible {
   }
 }
 
-@media (max-width: 640px) {
-  .nav-links-desktop {
-    display: none !important;
-  }
-  .hamburger-btn {
-    display: flex !important;
-  }
-}
-
+/* Responsive */
 @media (min-width: 641px) {
+  main {
+    padding: 48px 24px;
+  }
   .mobile-menu {
     display: none !important;
   }
 }
+
 @media (max-width: 640px) {
+  body {
+    font-size: 14px;
+  }
   .nav-links-desktop {
     display: none !important;
   }
   .hamburger-btn {
     display: flex !important;
   }
-
-  /* Añade esto */
   .cards-grid {
     grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .logo-text {
+    display: none;
   }
 }
