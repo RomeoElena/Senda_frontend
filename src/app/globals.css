@@ -125,6 +125,7 @@ select:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
+
 @media (min-width: 640px) {
   main {
     padding: 32px 24px;
@@ -134,5 +135,31 @@ select:focus-visible {
 @media (max-width: 480px) {
   body {
     font-size: 14px;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .nav-links-desktop {
+    display: none !important;
+  }
+  .hamburger-btn {
+    display: flex !important;
+  }
+}
+
+@media (min-width: 641px) {
+  .mobile-menu {
+    display: none !important;
   }
 }

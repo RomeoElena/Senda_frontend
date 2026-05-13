@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
 
 const navLinks = [
   { href: "/armario", label: "Armario" },
@@ -11,15 +12,35 @@ const navLinks = [
 
 export default function Navbar() {
   const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Cierra el menú al cambiar de página
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
+  // Bloquea el scroll cuando el menú está abierto
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
 
   return (
-    <header style={{ backgroundColor: "var(--color-primary)" }}>
+    <header
+      style={{
+        backgroundColor: "var(--color-primary)",
+        position: "relative",
+        zIndex: 100,
+      }}
+    >
       <nav
         style={{
           maxWidth: "1200px",
           margin: "0 auto",
-          padding: "0 16px",
-          height: "70px",
+          padding: "0 20px",
+          height: "64px",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -29,7 +50,7 @@ export default function Navbar() {
         <Link
           href="/"
           style={{
-            fontSize: "37px",
+            fontSize: "24px",
             fontWeight: "600",
             color: "#F7F5F2",
             textDecoration: "none",
@@ -40,15 +61,16 @@ export default function Navbar() {
           SENDA
         </Link>
 
-        {/* Links */}
+        {/* Links — desktop */}
         <ul
           style={{
             display: "flex",
-            gap: "24px",
+            gap: "32px",
             listStyle: "none",
             margin: 0,
             padding: 0,
           }}
+          className="nav-links-desktop"
         >
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
@@ -57,7 +79,7 @@ export default function Navbar() {
                 <Link
                   href={link.href}
                   style={{
-                    fontSize: "25px",
+                    fontSize: "15px",
                     fontWeight: isActive ? "500" : "400",
                     color: isActive ? "#F7F5F2" : "var(--color-primary-light)",
                     textDecoration: "none",
@@ -74,7 +96,108 @@ export default function Navbar() {
             );
           })}
         </ul>
+
+        {/* Botón hamburguesa — solo móvil */}
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
+          aria-expanded={menuOpen}
+          className="hamburger-btn"
+          style={{
+            display: "none",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "5px",
+            width: "40px",
+            height: "40px",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: "4px",
+          }}
+        >
+          <span
+            style={{
+              display: "block",
+              width: "22px",
+              height: "2px",
+              backgroundColor: "#F7F5F2",
+              borderRadius: "2px",
+              transition: "transform 0.25s ease, opacity 0.25s ease",
+              transform: menuOpen ? "translateY(7px) rotate(45deg)" : "none",
+            }}
+          />
+          <span
+            style={{
+              display: "block",
+              width: "22px",
+              height: "2px",
+              backgroundColor: "#F7F5F2",
+              borderRadius: "2px",
+              transition: "opacity 0.2s ease",
+              opacity: menuOpen ? 0 : 1,
+            }}
+          />
+          <span
+            style={{
+              display: "block",
+              width: "22px",
+              height: "2px",
+              backgroundColor: "#F7F5F2",
+              borderRadius: "2px",
+              transition: "transform 0.25s ease, opacity 0.25s ease",
+              transform: menuOpen ? "translateY(-7px) rotate(-45deg)" : "none",
+            }}
+          />
+        </button>
       </nav>
+
+      {/* Menú desplegable — only móvil */}
+      {menuOpen && (
+        <div
+          className="mobile-menu"
+          style={{
+            position: "absolute",
+            top: "64px",
+            left: 0,
+            right: 0,
+            backgroundColor: "var(--color-primary)",
+            borderTop: "1px solid rgba(255,255,255,0.1)",
+            padding: "8px 0 16px",
+            animation: "slideDown 0.2s ease",
+          }}
+        >
+          <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    style={{
+                      display: "block",
+                      padding: "14px 24px",
+                      fontSize: "16px",
+                      fontWeight: isActive ? "500" : "400",
+                      color: isActive
+                        ? "#F7F5F2"
+                        : "var(--color-primary-light)",
+                      textDecoration: "none",
+                      borderLeft: isActive
+                        ? "3px solid #F7F5F2"
+                        : "3px solid transparent",
+                      transition: "color 0.2s ease",
+                    }}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
     </header>
   );
 }
