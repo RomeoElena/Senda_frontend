@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 const FILTROS = ["Todas", "donar", "reciclar"];
 
@@ -24,7 +25,6 @@ export default function CircularPage() {
       if (!res.ok) throw new Error("Error al cargar las prendas");
       const data = await res.json();
 
-      // Si filtro es "Todas" mostramos solo donar y reciclar
       const filtradas =
         filtro === "Todas"
           ? data.filter((p) => p.estado === "donar" || p.estado === "reciclar")
@@ -71,7 +71,7 @@ export default function CircularPage() {
             marginBottom: "4px",
           }}
         >
-          Economia circular
+          Economía circular
         </h1>
         <p style={{ fontSize: "14px", color: "var(--color-text-muted)" }}>
           Prendas que puedes donar o reciclar para darles una segunda vida
@@ -178,7 +178,7 @@ export default function CircularPage() {
               marginTop: "2px",
             }}
           >
-            Total en circulacion
+            Total en circulación
           </p>
         </div>
       </section>
@@ -251,7 +251,7 @@ export default function CircularPage() {
         </p>
       )}
 
-      {/* Sin prendas */}
+      {/* Sin prendas — empty state con enlace */}
       {!cargando && !error && prendas.length === 0 && (
         <div
           style={{
@@ -260,13 +260,34 @@ export default function CircularPage() {
             color: "var(--color-text-muted)",
           }}
         >
-          <p style={{ fontSize: "16px", marginBottom: "8px" }}>
+          <p
+            style={{
+              fontSize: "16px",
+              marginBottom: "8px",
+              color: "var(--color-text)",
+            }}
+          >
             No tienes prendas para circular
           </p>
-          <p style={{ fontSize: "13px" }}>
+          <p style={{ fontSize: "13px", marginBottom: "24px" }}>
             Marca prendas como &quot;donar&quot; o &quot;reciclar&quot; desde tu
             armario
           </p>
+          <Link
+            href="/armario"
+            style={{
+              display: "inline-block",
+              backgroundColor: "var(--color-primary)",
+              color: "white",
+              borderRadius: "8px",
+              padding: "10px 20px",
+              fontSize: "14px",
+              fontWeight: "500",
+              textDecoration: "none",
+            }}
+          >
+            Ir al armario →
+          </Link>
         </div>
       )}
 
@@ -305,14 +326,9 @@ export default function CircularPage() {
                   fill
                   style={{ objectFit: "cover" }}
                 />
-                {/* Badge estado */}
                 <div
                   aria-hidden="true"
-                  style={{
-                    position: "absolute",
-                    top: "8px",
-                    left: "8px",
-                  }}
+                  style={{ position: "absolute", top: "8px", left: "8px" }}
                 >
                   <span className={`pill pill-${prenda.estado}`}>
                     {prenda.estado}
