@@ -103,7 +103,7 @@ export default function HomePage() {
             fontSize: "18px",
             color: "var(--color-text-muted)",
             lineHeight: "1.7",
-            textAlign: "justify",
+            textAlign: "left",
           }}
         >
           Gestiona tus prendas, crea looks personalizados y guarda tus favoritos

@@ -137,6 +137,10 @@ select:focus-visible {
     font-size: 14px;
   }
 }
+/* Ocultar por defecto en desktop el menu burgue */
+.hamburger-btn {
+  display: none;
+}
 
 @keyframes slideDown {
   from {
