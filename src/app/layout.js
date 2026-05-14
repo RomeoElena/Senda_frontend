@@ -17,17 +17,7 @@ export default function RootLayout({ children }) {
     <html lang="es">
       <body>
         <Navbar />
-        <main
-          style={{
-            maxWidth: "1200px",
-            margin: "0 auto",
-            padding: "48px 16px",
-            width: "100%",
-            overflow: "hidden",
-          }}
-        >
-          {children}
-        </main>
+        {children}
       </body>
     </html>
   );
