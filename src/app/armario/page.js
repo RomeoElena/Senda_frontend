@@ -1,362 +1,413 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, use } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
 
-const FILTROS_TIPO = [
-  "Todas",
+const TIPOS = [
   "Superior",
   "Inferior",
   "Exterior",
   "Calzado",
   "Complemento",
+  "Vestido",
 ];
-const FILTROS_ESTADO = ["Todos", "nuevo", "usado", "donar", "reciclar"];
+const ESTADOS = ["nuevo", "usado", "donar", "reciclar"];
 
-const labelFiltro = {
-  fontSize: "12px",
-  fontWeight: "500",
-  color: "var(--color-text-muted)",
-  marginBottom: "8px",
-  textTransform: "uppercase",
-  letterSpacing: "0.05em",
-};
+export default function EditarPrendaPage({ params }) {
+  const router = useRouter();
+  const { id } = use(params);
 
-export default function ArmarioPage() {
-  const [prendas, setPrendas] = useState([]);
   const [cargando, setCargando] = useState(true);
+  const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState(null);
-  const [filtroTipo, setFiltroTipo] = useState("Todas");
-  const [filtroEstado, setFiltroEstado] = useState("Todos");
+  const [preview, setPreview] = useState(null);
+  const [imagenNueva, setImagenNueva] = useState(null);
+  const [formData, setFormData] = useState({
+    nombre: "",
+    tipo: "",
+    color: "",
+    marca: "",
+    estado: "usado",
+    imagen: "",
+  });
 
-  const fetchPrendas = useCallback(async () => {
+  const fetchPrenda = useCallback(async () => {
     try {
       setCargando(true);
-      setError(null);
-      let url = `${process.env.NEXT_PUBLIC_API_URL}/prendas?`;
-      if (filtroTipo !== "Todas") url += `tipo=${filtroTipo}&`;
-      if (filtroEstado !== "Todos") url += `estado=${filtroEstado}`;
-
-      const res = await fetch(url);
-      if (!res.ok) throw new Error("Error al cargar las prendas");
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/prendas/${id}`,
+      );
+      if (!res.ok) throw new Error("Prenda no encontrada");
       const data = await res.json();
-      setPrendas(data);
+      setFormData({
+        nombre: data.nombre || "",
+        tipo: data.tipo || "",
+        color: data.color || "",
+        marca: data.marca || "",
+        estado: data.estado || "usado",
+        imagen: data.imagen || "",
+      });
+      setPreview(data.imagen || null);
     } catch (err) {
       setError(err.message);
     } finally {
       setCargando(false);
     }
-  }, [filtroTipo, filtroEstado]);
+  }, [id]);
 
   useEffect(() => {
-    fetchPrendas();
-  }, [fetchPrendas]);
+    fetchPrenda();
+  }, [fetchPrenda]);
 
-  const eliminarPrenda = async (id, nombre) => {
-    if (!confirm(`¿Segura que quieres eliminar "${nombre}"?`)) return;
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleImagen = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setImagenNueva(file);
+    setPreview(URL.createObjectURL(file));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.nombre || !formData.tipo) {
+      setError("El nombre y el tipo son obligatorios");
+      return;
+    }
+
     try {
+      setGuardando(true);
+      setError(null);
+
+      const data = new FormData();
+      data.append("nombre", formData.nombre);
+      data.append("tipo", formData.tipo);
+      data.append("color", formData.color);
+      data.append("marca", formData.marca);
+      data.append("estado", formData.estado);
+      if (imagenNueva) data.append("imagen", imagenNueva);
+
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/prendas/${id}`,
-        { method: "DELETE" },
+        {
+          method: "PUT",
+          body: data,
+        },
       );
-      if (!res.ok) throw new Error("Error al eliminar");
-      setPrendas(prendas.filter((p) => p._id !== id));
+
+      if (!res.ok) throw new Error("Error al actualizar la prenda");
+
+      router.push("/armario");
     } catch (err) {
-      alert(err.message);
+      setError(err.message);
+    } finally {
+      setGuardando(false);
     }
   };
 
+  if (cargando) {
+    return (
+      <main className="page-container">
+        <p style={{ color: "var(--color-text-muted)", fontSize: "14px" }}>
+          Cargando prenda...
+        </p>
+      </main>
+    );
+  }
+
   return (
     <main className="page-container">
-      {/* Cabecera */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "32px",
-        }}
-      >
-        <div>
+      <div style={{ maxWidth: "560px", margin: "0 auto" }}>
+        {/* Cabecera */}
+        <div style={{ marginBottom: "32px" }}>
+          <button
+            onClick={() => router.back()}
+            style={{
+              background: "none",
+              border: "none",
+              color: "var(--color-text-muted)",
+              fontSize: "14px",
+              cursor: "pointer",
+              padding: "0",
+              marginBottom: "20px",
+              display: "flex",
+              alignItems: "center",
+              gap: "4px",
+            }}
+          >
+            ← Volver
+          </button>
           <h1
             style={{
               fontSize: "26px",
               fontWeight: "600",
               color: "var(--color-text)",
-              marginBottom: "4px",
+              marginBottom: "6px",
             }}
           >
-            Mi armario
+            Editar prenda
           </h1>
-          <p
-            aria-live="polite"
-            style={{ fontSize: "14px", color: "var(--color-text-muted)" }}
-          >
-            {prendas.length} {prendas.length === 1 ? "prenda" : "prendas"}{" "}
-            registradas
+          <p style={{ fontSize: "14px", color: "var(--color-text-muted)" }}>
+            Modifica los datos de tu prenda
           </p>
         </div>
-        <Link
-          href="/armario/nueva"
-          aria-label="Añadir nueva prenda al armario"
-          className="btn-primary"
-          style={{ textDecoration: "none" }}
-        >
-          + Añadir prenda
-        </Link>
-      </div>
 
-      {/* Filtros */}
-      <div style={{ marginBottom: "32px" }}>
-        <nav aria-label="Filtrar por tipo de prenda">
-          <p style={labelFiltro}>Tipo</p>
+        {/* Error */}
+        {error && (
           <div
-            role="group"
             style={{
-              display: "flex",
-              gap: "8px",
-              marginBottom: "16px",
-              flexWrap: "wrap",
+              backgroundColor: "var(--color-reciclar)",
+              color: "var(--color-reciclar-text)",
+              padding: "12px 16px",
+              borderRadius: "8px",
+              fontSize: "14px",
+              marginBottom: "20px",
             }}
           >
-            {FILTROS_TIPO.map((tipo) => (
-              <button
-                key={tipo}
-                onClick={() => setFiltroTipo(tipo)}
-                aria-pressed={filtroTipo === tipo}
-                style={{
-                  fontSize: "13px",
-                  padding: "6px 16px",
-                  borderRadius: "99px",
-                  border:
-                    filtroTipo === tipo
-                      ? "none"
-                      : "1px solid var(--color-border)",
-                  backgroundColor:
-                    filtroTipo === tipo
-                      ? "var(--color-primary)"
-                      : "var(--color-surface)",
-                  color:
-                    filtroTipo === tipo ? "white" : "var(--color-text-muted)",
-                  cursor: "pointer",
-                  fontWeight: filtroTipo === tipo ? "500" : "400",
-                  transition: "all 0.2s ease",
-                }}
-              >
-                {tipo}
-              </button>
-            ))}
+            {error}
           </div>
-        </nav>
+        )}
 
-        <nav aria-label="Filtrar por estado de prenda">
-          <p style={labelFiltro}>Estado</p>
-          <div
-            role="group"
-            style={{
-              display: "flex",
-              gap: "8px",
-              flexWrap: "wrap",
-            }}
-          >
-            {FILTROS_ESTADO.map((estado) => (
-              <button
-                key={estado}
-                onClick={() => setFiltroEstado(estado)}
-                aria-pressed={filtroEstado === estado}
-                style={{
-                  fontSize: "12px",
-                  padding: "4px 14px",
-                  borderRadius: "99px",
-                  border:
-                    filtroEstado === estado
-                      ? "none"
-                      : "1px solid var(--color-border)",
-                  backgroundColor:
-                    filtroEstado === estado
-                      ? "var(--color-text)"
-                      : "var(--color-surface)",
-                  color:
-                    filtroEstado === estado
-                      ? "white"
-                      : "var(--color-text-muted)",
-                  cursor: "pointer",
-                  transition: "all 0.2s ease",
-                }}
-              >
-                {estado}
-              </button>
-            ))}
-          </div>
-        </nav>
-      </div>
-
-      {/* Cargando */}
-      {cargando && (
-        <p
-          role="status"
-          style={{ color: "var(--color-text-muted)", fontSize: "14px" }}
-        >
-          Cargando prendas...
-        </p>
-      )}
-
-      {/* Error */}
-      {error && (
-        <div
-          role="alert"
-          style={{
-            backgroundColor: "var(--color-reciclar)",
-            color: "var(--color-reciclar-text)",
-            padding: "12px 16px",
-            borderRadius: "8px",
-            fontSize: "14px",
-            marginBottom: "16px",
-          }}
-        >
-          {error} — ¿Está el servidor backend encendido?
-        </div>
-      )}
-
-      {/* Vacío */}
-      {!cargando && !error && prendas.length === 0 && (
-        <div
-          style={{
-            textAlign: "center",
-            padding: "80px 24px",
-            color: "var(--color-text-muted)",
-          }}
-        >
-          <p style={{ fontSize: "16px", marginBottom: "8px" }}>
-            Tu armario está vacío
-          </p>
-          <p style={{ fontSize: "13px" }}>
-            Añade tu primera prenda para empezar
-          </p>
-        </div>
-      )}
-
-      {/* Grid de prendas */}
-      <section aria-label="Lista de prendas">
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-            gap: "20px",
-          }}
-        >
-          {prendas.map((prenda) => (
-            <article
-              key={prenda._id}
-              aria-label={`Prenda: ${prenda.nombre}`}
+        <form onSubmit={handleSubmit}>
+          {/* Imagen */}
+          <div style={{ marginBottom: "24px" }}>
+            <label style={labelStyle}>Fotografía de la prenda</label>
+            <div
               style={{
+                width: "100%",
+                aspectRatio: "3 / 4",
+                backgroundColor: "var(--color-surface)",
+                border: "1.5px dashed var(--color-border)",
                 borderRadius: "12px",
-                border: "0.5px solid var(--color-border)",
                 overflow: "hidden",
                 position: "relative",
-                height: "280px",
                 cursor: "pointer",
-                transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-3px)";
-                e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.12)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "none";
-                e.currentTarget.style.boxShadow = "none";
-              }}
+              onClick={() => document.getElementById("imagen-input").click()}
             >
-              <Image
-                src={prenda.imagen || "https://via.placeholder.com/200x280"}
-                alt={`Fotografía de ${prenda.nombre}`}
-                fill
-                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-                style={{ objectFit: "cover" }}
-              />
-
-              <div
-                style={{
-                  position: "absolute",
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  background:
-                    "linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)",
-                  padding: "14px",
-                  color: "white",
-                }}
-              >
-                <p
-                  style={{
-                    fontSize: "14px",
-                    fontWeight: "600",
-                    marginBottom: "2px",
-                  }}
-                >
-                  {prenda.nombre}
-                </p>
-                <p
-                  style={{
-                    fontSize: "11px",
-                    opacity: 0.8,
-                    marginBottom: "10px",
-                  }}
-                >
-                  {prenda.tipo}
-                </p>
+              {preview ? (
+                <Image
+                  src={preview}
+                  alt="Preview"
+                  fill
+                  style={{ objectFit: "contain" }}
+                />
+              ) : (
                 <div
                   style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
+                    textAlign: "center",
+                    color: "var(--color-text-muted)",
+                    padding: "24px",
                   }}
                 >
-                  <span className={`pill pill-${prenda.estado}`}>
-                    {prenda.estado}
-                  </span>
-                  <div style={{ display: "flex", gap: "6px" }}>
-                    <Link
-                      href={`/armario/${prenda._id}`}
-                      aria-label={`Editar prenda ${prenda.nombre}`}
-                      style={{
-                        fontSize: "11px",
-                        padding: "4px 10px",
-                        borderRadius: "6px",
-                        backgroundColor: "rgba(255,255,255,0.25)",
-                        color: "white",
-                        textDecoration: "none",
-                        fontWeight: "500",
-                        backdropFilter: "blur(4px)",
-                      }}
-                    >
-                      Editar
-                    </Link>
-                    <button
-                      onClick={() => eliminarPrenda(prenda._id, prenda.nombre)}
-                      aria-label={`Eliminar prenda ${prenda.nombre}`}
-                      style={{
-                        fontSize: "11px",
-                        padding: "4px 10px",
-                        borderRadius: "6px",
-                        backgroundColor: "rgba(255,255,255,0.15)",
-                        color: "white",
-                        border: "none",
-                        cursor: "pointer",
-                        fontWeight: "500",
-                        backdropFilter: "blur(4px)",
-                      }}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
+                  <p style={{ fontSize: "40px", marginBottom: "12px" }}>📷</p>
+                  <p style={{ fontSize: "14px", fontWeight: "500" }}>
+                    Haz clic para cambiar la foto
+                  </p>
                 </div>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
+              )}
+            </div>
+            <input
+              id="imagen-input"
+              type="file"
+              accept="image/*"
+              onChange={handleImagen}
+              style={{ display: "none" }}
+            />
+            {preview && (
+              <button
+                type="button"
+                onClick={() => {
+                  setPreview(null);
+                  setImagenNueva(null);
+                }}
+                style={{
+                  marginTop: "8px",
+                  fontSize: "12px",
+                  color: "var(--color-text-muted)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: "0",
+                }}
+              >
+                Eliminar foto
+              </button>
+            )}
+          </div>
+
+          {/* Nombre */}
+          <div style={{ marginBottom: "16px" }}>
+            <label style={labelStyle} htmlFor="nombre">
+              Nombre{" "}
+              <span style={{ color: "var(--color-reciclar-text)" }}>*</span>
+            </label>
+            <input
+              id="nombre"
+              name="nombre"
+              type="text"
+              value={formData.nombre}
+              onChange={handleChange}
+              placeholder="Ej: Camiseta blanca de algodón"
+              style={inputStyle}
+            />
+          </div>
+
+          {/* Tipo */}
+          <div style={{ marginBottom: "16px" }}>
+            <label style={labelStyle} htmlFor="tipo">
+              Tipo{" "}
+              <span style={{ color: "var(--color-reciclar-text)" }}>*</span>
+            </label>
+            <select
+              id="tipo"
+              name="tipo"
+              value={formData.tipo}
+              onChange={handleChange}
+              style={inputStyle}
+            >
+              <option value="">Selecciona un tipo</option>
+              {TIPOS.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Color y Marca */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "16px",
+              marginBottom: "16px",
+            }}
+          >
+            <div>
+              <label style={labelStyle} htmlFor="color">
+                Color
+              </label>
+              <input
+                id="color"
+                name="color"
+                type="text"
+                value={formData.color}
+                onChange={handleChange}
+                placeholder="Ej: Blanco"
+                style={inputStyle}
+              />
+            </div>
+            <div>
+              <label style={labelStyle} htmlFor="marca">
+                Marca
+              </label>
+              <input
+                id="marca"
+                name="marca"
+                type="text"
+                value={formData.marca}
+                onChange={handleChange}
+                placeholder="Ej: Zara"
+                style={inputStyle}
+              />
+            </div>
+          </div>
+
+          {/* Estado */}
+          <div style={{ marginBottom: "32px" }}>
+            <label style={labelStyle}>Estado</label>
+            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+              {ESTADOS.map((estado) => (
+                <button
+                  key={estado}
+                  type="button"
+                  onClick={() => setFormData({ ...formData, estado })}
+                  style={{
+                    fontSize: "13px",
+                    padding: "6px 16px",
+                    borderRadius: "99px",
+                    border:
+                      formData.estado === estado
+                        ? "none"
+                        : "1px solid var(--color-border)",
+                    backgroundColor:
+                      formData.estado === estado
+                        ? "var(--color-primary)"
+                        : "var(--color-surface)",
+                    color:
+                      formData.estado === estado
+                        ? "white"
+                        : "var(--color-text-muted)",
+                    cursor: "pointer",
+                    fontWeight: formData.estado === estado ? "500" : "400",
+                    transition: "all 0.2s ease",
+                  }}
+                >
+                  {estado}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Botones */}
+          <div style={{ display: "flex", gap: "12px" }}>
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="btn-secondary"
+              style={{ flex: 1, padding: "12px" }}
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={guardando}
+              style={{
+                flex: 2,
+                padding: "12px",
+                borderRadius: "8px",
+                border: "none",
+                backgroundColor: guardando
+                  ? "var(--color-primary-light)"
+                  : "var(--color-primary)",
+                color: "white",
+                fontSize: "14px",
+                fontWeight: "500",
+                cursor: guardando ? "not-allowed" : "pointer",
+                transition: "background-color 0.2s ease",
+              }}
+            >
+              {guardando ? "Guardando..." : "Guardar cambios"}
+            </button>
+          </div>
+        </form>
+      </div>
     </main>
   );
 }
+
+const labelStyle = {
+  display: "block",
+  fontSize: "13px",
+  fontWeight: "500",
+  color: "var(--color-text)",
+  marginBottom: "6px",
+};
+
+const inputStyle = {
+  width: "100%",
+  padding: "10px 12px",
+  borderRadius: "8px",
+  border: "1px solid var(--color-border)",
+  backgroundColor: "var(--color-surface)",
+  color: "var(--color-text)",
+  fontSize: "14px",
+  outline: "none",
+};
