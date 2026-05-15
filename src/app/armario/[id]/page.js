@@ -77,11 +77,9 @@ export default function EditarPrendaPage({ params }) {
       setError("El nombre y el tipo son obligatorios");
       return;
     }
-
     try {
       setGuardando(true);
       setError(null);
-
       const data = new FormData();
       data.append("nombre", formData.nombre);
       data.append("tipo", formData.tipo);
@@ -89,7 +87,6 @@ export default function EditarPrendaPage({ params }) {
       data.append("marca", formData.marca);
       data.append("estado", formData.estado);
       if (imagenNueva) data.append("imagen", imagenNueva);
-
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/prendas/${id}`,
         {
@@ -97,9 +94,7 @@ export default function EditarPrendaPage({ params }) {
           body: data,
         },
       );
-
       if (!res.ok) throw new Error("Error al actualizar la prenda");
-
       router.push("/armario");
     } catch (err) {
       setError(err.message);
@@ -117,8 +112,7 @@ export default function EditarPrendaPage({ params }) {
   }
 
   return (
-    <div style={{ maxWidth: "560px" }}>
-      {/* Cabecera */}
+    <div style={{ maxWidth: "560px", margin: "0 auto" }}>
       <div style={{ marginBottom: "32px" }}>
         <button
           onClick={() => router.back()}
@@ -129,7 +123,7 @@ export default function EditarPrendaPage({ params }) {
             fontSize: "14px",
             cursor: "pointer",
             padding: "0",
-            marginBottom: "16px",
+            marginBottom: "20px",
             display: "flex",
             alignItems: "center",
             gap: "4px",
@@ -139,25 +133,19 @@ export default function EditarPrendaPage({ params }) {
         </button>
         <h1
           style={{
-            fontSize: "22px",
-            fontWeight: "500",
+            fontSize: "26px",
+            fontWeight: "600",
             color: "var(--color-text)",
+            marginBottom: "6px",
           }}
         >
           Editar prenda
         </h1>
-        <p
-          style={{
-            fontSize: "14px",
-            color: "var(--color-text-muted)",
-            marginTop: "4px",
-          }}
-        >
+        <p style={{ fontSize: "14px", color: "var(--color-text-muted)" }}>
           Modifica los datos de tu prenda
         </p>
       </div>
 
-      {/* Error */}
       {error && (
         <div
           style={{
@@ -174,14 +162,13 @@ export default function EditarPrendaPage({ params }) {
       )}
 
       <form onSubmit={handleSubmit}>
-        {/* Preview imagen */}
         <div style={{ marginBottom: "24px" }}>
           <label style={labelStyle}>Fotografía de la prenda</label>
           <div
             style={{
               width: "100%",
-              height: "220px",
-              backgroundColor: "var(--color-surface)",
+              height: "360px",
+              backgroundColor: "white",
               border: "1.5px dashed var(--color-border)",
               borderRadius: "12px",
               overflow: "hidden",
@@ -198,17 +185,18 @@ export default function EditarPrendaPage({ params }) {
                 src={preview}
                 alt="Preview"
                 fill
-                style={{ objectFit: "cover" }}
+                style={{ objectFit: "contain" }}
               />
             ) : (
               <div
                 style={{
                   textAlign: "center",
                   color: "var(--color-text-muted)",
+                  padding: "24px",
                 }}
               >
-                <p style={{ fontSize: "32px", marginBottom: "8px" }}>📷</p>
-                <p style={{ fontSize: "14px" }}>
+                <p style={{ fontSize: "40px", marginBottom: "12px" }}>📷</p>
+                <p style={{ fontSize: "14px", fontWeight: "500" }}>
                   Haz clic para cambiar la foto
                 </p>
               </div>
@@ -243,7 +231,6 @@ export default function EditarPrendaPage({ params }) {
           )}
         </div>
 
-        {/* Nombre */}
         <div style={{ marginBottom: "16px" }}>
           <label style={labelStyle} htmlFor="nombre">
             Nombre{" "}
@@ -260,7 +247,6 @@ export default function EditarPrendaPage({ params }) {
           />
         </div>
 
-        {/* Tipo */}
         <div style={{ marginBottom: "16px" }}>
           <label style={labelStyle} htmlFor="tipo">
             Tipo <span style={{ color: "var(--color-reciclar-text)" }}>*</span>
@@ -281,7 +267,6 @@ export default function EditarPrendaPage({ params }) {
           </select>
         </div>
 
-        {/* Color y Marca */}
         <div
           style={{
             display: "grid",
@@ -320,8 +305,7 @@ export default function EditarPrendaPage({ params }) {
           </div>
         </div>
 
-        {/* Estado */}
-        <div style={{ marginBottom: "28px" }}>
+        <div style={{ marginBottom: "32px" }}>
           <label style={labelStyle}>Estado</label>
           <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
             {ESTADOS.map((estado) => (
@@ -356,22 +340,12 @@ export default function EditarPrendaPage({ params }) {
           </div>
         </div>
 
-        {/* Botones */}
         <div style={{ display: "flex", gap: "12px" }}>
           <button
             type="button"
             onClick={() => router.back()}
-            style={{
-              flex: 1,
-              padding: "12px",
-              borderRadius: "8px",
-              border: "1px solid var(--color-border)",
-              backgroundColor: "var(--color-surface)",
-              color: "var(--color-text)",
-              fontSize: "14px",
-              fontWeight: "500",
-              cursor: "pointer",
-            }}
+            className="btn-secondary"
+            style={{ flex: 1, padding: "12px" }}
           >
             Cancelar
           </button>
@@ -408,7 +382,6 @@ const labelStyle = {
   color: "var(--color-text)",
   marginBottom: "6px",
 };
-
 const inputStyle = {
   width: "100%",
   padding: "10px 12px",
