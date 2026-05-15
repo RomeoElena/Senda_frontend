@@ -126,7 +126,7 @@ export default function EstadisticasPage() {
             Estadísticas
           </h1>
           <p style={{ fontSize: "14px", color: "var(--color-text-muted)" }}>
-            Visualiza el impacto de tu armario digital
+            Visualiza el impacto de tu armario digital.
           </p>
         </div>
 
@@ -346,7 +346,7 @@ export default function EstadisticasPage() {
                 marginBottom: "8px",
               }}
             >
-              💡 Recomendación
+              Recomendación:
             </h3>
             <p
               style={{
