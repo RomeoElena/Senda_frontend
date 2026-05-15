@@ -5,5 +5,5 @@ export const metadata = {
 };
 
 export default function ArmarioLayout({ children }) {
-  return children;
+  return <main className="page-container">{children}</main>;
 }
