@@ -124,6 +124,7 @@ export default function EditarPrendaPage({ params }) {
             cursor: "pointer",
             padding: "0",
             marginBottom: "20px",
+            paddingTop: "8px",
             display: "flex",
             alignItems: "center",
             gap: "4px",

@@ -5,5 +5,11 @@ export const metadata = {
 };
 
 export default function ArmarioLayout({ children }) {
-  return <main className="page-container">{children}</main>;
+  return (
+    <main
+      style={{ maxWidth: "1200px", margin: "0 auto", padding: "16px 16px" }}
+    >
+      {children}
+    </main>
+  );
 }
