@@ -14,6 +14,15 @@ const FILTROS_TIPO = [
 ];
 const FILTROS_ESTADO = ["Todos", "nuevo", "usado", "donar", "reciclar"];
 
+const labelFiltro = {
+  fontSize: "12px",
+  fontWeight: "500",
+  color: "var(--color-text-muted)",
+  marginBottom: "8px",
+  textTransform: "uppercase",
+  letterSpacing: "0.05em",
+};
+
 export default function ArmarioPage() {
   const [prendas, setPrendas] = useState([]);
   const [cargando, setCargando] = useState(true);
@@ -98,84 +107,90 @@ export default function ArmarioPage() {
         </Link>
       </div>
 
-      {/* Filtros tipo */}
-      <nav aria-label="Filtrar por tipo de prenda">
-        <div
-          role="group"
-          style={{
-            display: "flex",
-            gap: "8px",
-            marginBottom: "10px",
-            flexWrap: "wrap",
-          }}
-        >
-          {FILTROS_TIPO.map((tipo) => (
-            <button
-              key={tipo}
-              onClick={() => setFiltroTipo(tipo)}
-              aria-pressed={filtroTipo === tipo}
-              style={{
-                fontSize: "13px",
-                padding: "6px 16px",
-                borderRadius: "99px",
-                border:
-                  filtroTipo === tipo
-                    ? "none"
-                    : "1px solid var(--color-border)",
-                backgroundColor:
-                  filtroTipo === tipo
-                    ? "var(--color-primary)"
-                    : "var(--color-surface)",
-                color:
-                  filtroTipo === tipo ? "white" : "var(--color-text-muted)",
-                cursor: "pointer",
-                fontWeight: filtroTipo === tipo ? "500" : "400",
-                transition: "all 0.2s ease",
-              }}
-            >
-              {tipo}
-            </button>
-          ))}
-        </div>
-      </nav>
+      {/* Filtros */}
+      <div style={{ marginBottom: "32px" }}>
+        <nav aria-label="Filtrar por tipo de prenda">
+          <p style={labelFiltro}>Tipo</p>
+          <div
+            role="group"
+            style={{
+              display: "flex",
+              gap: "8px",
+              marginBottom: "16px",
+              flexWrap: "wrap",
+            }}
+          >
+            {FILTROS_TIPO.map((tipo) => (
+              <button
+                key={tipo}
+                onClick={() => setFiltroTipo(tipo)}
+                aria-pressed={filtroTipo === tipo}
+                style={{
+                  fontSize: "13px",
+                  padding: "6px 16px",
+                  borderRadius: "99px",
+                  border:
+                    filtroTipo === tipo
+                      ? "none"
+                      : "1px solid var(--color-border)",
+                  backgroundColor:
+                    filtroTipo === tipo
+                      ? "var(--color-primary)"
+                      : "var(--color-surface)",
+                  color:
+                    filtroTipo === tipo ? "white" : "var(--color-text-muted)",
+                  cursor: "pointer",
+                  fontWeight: filtroTipo === tipo ? "500" : "400",
+                  transition: "all 0.2s ease",
+                }}
+              >
+                {tipo}
+              </button>
+            ))}
+          </div>
+        </nav>
 
-      {/* Filtros estado */}
-      <nav aria-label="Filtrar por estado de prenda">
-        <div
-          role="group"
-          style={{
-            display: "flex",
-            gap: "8px",
-            marginBottom: "32px",
-            flexWrap: "wrap",
-          }}
-        >
-          {FILTROS_ESTADO.map((estado) => (
-            <button
-              key={estado}
-              onClick={() => setFiltroEstado(estado)}
-              aria-pressed={filtroEstado === estado}
-              style={{
-                fontSize: "12px",
-                padding: "4px 14px",
-                borderRadius: "99px",
-                border:
-                  filtroEstado === estado
-                    ? "none"
-                    : "1px solid var(--color-border)",
-                backgroundColor:
-                  filtroEstado === estado ? "var(--color-text)" : "transparent",
-                color:
-                  filtroEstado === estado ? "white" : "var(--color-text-muted)",
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-              }}
-            >
-              {estado}
-            </button>
-          ))}
-        </div>
-      </nav>
+        <nav aria-label="Filtrar por estado de prenda">
+          <p style={labelFiltro}>Estado</p>
+          <div
+            role="group"
+            style={{
+              display: "flex",
+              gap: "8px",
+              flexWrap: "wrap",
+            }}
+          >
+            {FILTROS_ESTADO.map((estado) => (
+              <button
+                key={estado}
+                onClick={() => setFiltroEstado(estado)}
+                aria-pressed={filtroEstado === estado}
+                style={{
+                  fontSize: "12px",
+                  padding: "4px 14px",
+                  borderRadius: "99px",
+                  border:
+                    filtroEstado === estado
+                      ? "none"
+                      : "1px solid var(--color-border)",
+                  backgroundColor:
+                    filtroEstado === estado
+                      ? "var(--color-text)"
+                      : "var(--color-surface)",
+                  color:
+                    filtroEstado === estado
+                      ? "white"
+                      : "var(--color-text-muted)",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                }}
+              >
+                {estado}
+              </button>
+            ))}
+          </div>
+        </nav>
+      </div>
 
       {/* Cargando */}
       {cargando && (
@@ -253,7 +268,6 @@ export default function ArmarioPage() {
                 e.currentTarget.style.boxShadow = "none";
               }}
             >
-              {/* Imagen de fondo */}
               <Image
                 src={prenda.imagen || "https://via.placeholder.com/200x280"}
                 alt={`Fotografía de ${prenda.nombre}`}
@@ -262,7 +276,6 @@ export default function ArmarioPage() {
                 style={{ objectFit: "cover" }}
               />
 
-              {/* Gradiente + info */}
               <div
                 style={{
                   position: "absolute",
