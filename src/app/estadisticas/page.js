@@ -72,8 +72,8 @@ export default function EstadisticasPage() {
   });
 
   outfits.forEach((outfit) => {
-    if (!outfit.creadoEn) return;
-    const fecha = new Date(outfit.creadoEn);
+    if (!outfit.createdAt) return;
+    const fecha = new Date(outfit.createdAt);
     const entry = meses.find(
       (m) => m.month === fecha.getMonth() && m.year === fecha.getFullYear(),
     );
