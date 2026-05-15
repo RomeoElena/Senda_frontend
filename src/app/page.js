@@ -64,10 +64,6 @@ export default function HomePage() {
           </div>
         </div>
       </main>
-
-      <footer>
-        <div className="footer-content">© 2026 Senda · Tu armario digital</div>
-      </footer>
     </>
   );
 }

@@ -18,6 +18,11 @@ export default function RootLayout({ children }) {
       <body>
         <Navbar />
         {children}
+        <footer>
+          <div className="footer-content">
+            © 2026 Senda · Tu armario digital
+          </div>
+        </footer>
       </body>
     </html>
   );

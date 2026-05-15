@@ -59,21 +59,21 @@ export default function ArmarioPage() {
   };
 
   return (
-    <main>
-      {/* Intro */}
+    <main className="page-container">
+      {/* Cabecera */}
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "flex-start",
-          marginBottom: "24px",
+          alignItems: "center",
+          marginBottom: "32px",
         }}
       >
         <div>
           <h1
             style={{
-              fontSize: "22px",
-              fontWeight: "500",
+              fontSize: "26px",
+              fontWeight: "600",
               color: "var(--color-text)",
               marginBottom: "4px",
             }}
@@ -91,16 +91,8 @@ export default function ArmarioPage() {
         <Link
           href="/armario/nueva"
           aria-label="Añadir nueva prenda al armario"
-          style={{
-            backgroundColor: "var(--color-primary)",
-            color: "white",
-            borderRadius: "8px",
-            padding: "10px 18px",
-            fontSize: "14px",
-            fontWeight: "500",
-            textDecoration: "none",
-            display: "inline-block",
-          }}
+          className="btn-primary"
+          style={{ textDecoration: "none" }}
         >
           + Añadir prenda
         </Link>
@@ -110,11 +102,10 @@ export default function ArmarioPage() {
       <nav aria-label="Filtrar por tipo de prenda">
         <div
           role="group"
-          aria-label="Tipos de prenda"
           style={{
             display: "flex",
             gap: "8px",
-            marginBottom: "12px",
+            marginBottom: "10px",
             flexWrap: "wrap",
           }}
         >
@@ -123,10 +114,9 @@ export default function ArmarioPage() {
               key={tipo}
               onClick={() => setFiltroTipo(tipo)}
               aria-pressed={filtroTipo === tipo}
-              aria-label={`Filtrar por tipo: ${tipo}`}
               style={{
                 fontSize: "13px",
-                padding: "6px 14px",
+                padding: "6px 16px",
                 borderRadius: "99px",
                 border:
                   filtroTipo === tipo
@@ -153,11 +143,10 @@ export default function ArmarioPage() {
       <nav aria-label="Filtrar por estado de prenda">
         <div
           role="group"
-          aria-label="Estados de prenda"
           style={{
             display: "flex",
             gap: "8px",
-            marginBottom: "28px",
+            marginBottom: "32px",
             flexWrap: "wrap",
           }}
         >
@@ -166,10 +155,9 @@ export default function ArmarioPage() {
               key={estado}
               onClick={() => setFiltroEstado(estado)}
               aria-pressed={filtroEstado === estado}
-              aria-label={`Filtrar por estado: ${estado}`}
               style={{
                 fontSize: "12px",
-                padding: "4px 12px",
+                padding: "4px 14px",
                 borderRadius: "99px",
                 border:
                   filtroEstado === estado
@@ -189,11 +177,10 @@ export default function ArmarioPage() {
         </div>
       </nav>
 
-      {/* Estado de carga */}
+      {/* Cargando */}
       {cargando && (
         <p
           role="status"
-          aria-live="polite"
           style={{ color: "var(--color-text-muted)", fontSize: "14px" }}
         >
           Cargando prendas...
@@ -204,7 +191,6 @@ export default function ArmarioPage() {
       {error && (
         <div
           role="alert"
-          aria-live="assertive"
           style={{
             backgroundColor: "var(--color-reciclar)",
             color: "var(--color-reciclar-text)",
@@ -218,12 +204,12 @@ export default function ArmarioPage() {
         </div>
       )}
 
-      {/* Armario vacío */}
+      {/* Vacío */}
       {!cargando && !error && prendas.length === 0 && (
         <div
           style={{
             textAlign: "center",
-            padding: "60px 24px",
+            padding: "80px 24px",
             color: "var(--color-text-muted)",
           }}
         >
@@ -239,11 +225,10 @@ export default function ArmarioPage() {
       {/* Grid de prendas */}
       <section aria-label="Lista de prendas">
         <div
-          className="cards-grid"
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
-            gap: "16px",
+            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+            gap: "20px",
           }}
         >
           {prendas.map((prenda) => (
@@ -251,94 +236,108 @@ export default function ArmarioPage() {
               key={prenda._id}
               aria-label={`Prenda: ${prenda.nombre}`}
               style={{
-                backgroundColor: "var(--color-surface)",
                 borderRadius: "12px",
                 border: "0.5px solid var(--color-border)",
                 overflow: "hidden",
+                position: "relative",
+                height: "280px",
+                cursor: "pointer",
+                transition: "transform 0.2s ease, box-shadow 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-3px)";
+                e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.12)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "none";
+                e.currentTarget.style.boxShadow = "none";
               }}
             >
-              {/* Imagen */}
+              {/* Imagen de fondo */}
+              <Image
+                src={prenda.imagen || "https://via.placeholder.com/200x280"}
+                alt={`Fotografía de ${prenda.nombre}`}
+                fill
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                style={{ objectFit: "cover" }}
+              />
+
+              {/* Gradiente + info */}
               <div
                 style={{
-                  height: "180px",
-                  backgroundColor: "var(--color-border)",
-                  position: "relative",
+                  position: "absolute",
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  background:
+                    "linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)",
+                  padding: "14px",
+                  color: "white",
                 }}
               >
-                <Image
-                  src={prenda.imagen || "https://via.placeholder.com/200x160"}
-                  alt={`Fotografía de ${prenda.nombre}, tipo ${prenda.tipo}`}
-                  fill
-                  style={{ objectFit: "cover" }}
-                />
-              </div>
-
-              {/* Información */}
-              <div style={{ padding: "12px" }}>
                 <p
                   style={{
                     fontSize: "14px",
-                    fontWeight: "500",
-                    color: "var(--color-text)",
-                    marginBottom: "4px",
+                    fontWeight: "600",
+                    marginBottom: "2px",
                   }}
                 >
                   {prenda.nombre}
                 </p>
                 <p
                   style={{
-                    fontSize: "12px",
-                    color: "var(--color-text-muted)",
-                    marginBottom: "8px",
+                    fontSize: "11px",
+                    opacity: 0.8,
+                    marginBottom: "10px",
                   }}
                 >
                   {prenda.tipo}
                 </p>
-
-                {/* Estado */}
-                <span
-                  className={`pill pill-${prenda.estado}`}
-                  aria-label={`Estado: ${prenda.estado}`}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
                 >
-                  {prenda.estado}
-                </span>
-
-                {/* Acciones */}
-                <div style={{ display: "flex", gap: "8px", marginTop: "12px" }}>
-                  <Link
-                    href={`/armario/${prenda._id}`}
-                    aria-label={`Editar prenda ${prenda.nombre}`}
-                    style={{
-                      flex: 1,
-                      textAlign: "center",
-                      fontSize: "12px",
-                      padding: "6px",
-                      borderRadius: "6px",
-                      backgroundColor: "var(--color-primary-light)",
-                      color: "var(--color-primary)",
-                      textDecoration: "none",
-                      fontWeight: "500",
-                    }}
-                  >
-                    Editar
-                  </Link>
-                  <button
-                    onClick={() => eliminarPrenda(prenda._id, prenda.nombre)}
-                    aria-label={`Eliminar prenda ${prenda.nombre}`}
-                    style={{
-                      flex: 1,
-                      fontSize: "12px",
-                      padding: "6px",
-                      borderRadius: "6px",
-                      backgroundColor: "var(--color-reciclar)",
-                      color: "var(--color-reciclar-text)",
-                      border: "none",
-                      cursor: "pointer",
-                      fontWeight: "500",
-                    }}
-                  >
-                    Eliminar
-                  </button>
+                  <span className={`pill pill-${prenda.estado}`}>
+                    {prenda.estado}
+                  </span>
+                  <div style={{ display: "flex", gap: "6px" }}>
+                    <Link
+                      href={`/armario/${prenda._id}`}
+                      aria-label={`Editar prenda ${prenda.nombre}`}
+                      style={{
+                        fontSize: "11px",
+                        padding: "4px 10px",
+                        borderRadius: "6px",
+                        backgroundColor: "rgba(255,255,255,0.25)",
+                        color: "white",
+                        textDecoration: "none",
+                        fontWeight: "500",
+                        backdropFilter: "blur(4px)",
+                      }}
+                    >
+                      Editar
+                    </Link>
+                    <button
+                      onClick={() => eliminarPrenda(prenda._id, prenda.nombre)}
+                      aria-label={`Eliminar prenda ${prenda.nombre}`}
+                      style={{
+                        fontSize: "11px",
+                        padding: "4px 10px",
+                        borderRadius: "6px",
+                        backgroundColor: "rgba(255,255,255,0.15)",
+                        color: "white",
+                        border: "none",
+                        cursor: "pointer",
+                        fontWeight: "500",
+                        backdropFilter: "blur(4px)",
+                      }}
+                    >
+                      Eliminar
+                    </button>
+                  </div>
                 </div>
               </div>
             </article>
