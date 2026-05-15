@@ -47,7 +47,7 @@ export default function OutfitsPage() {
     fetchPrendas();
   }, [fetchOutfits, fetchPrendas]);
 
-  const togglePrenda = (id, nombre) => {
+  const togglePrenda = (id) => {
     setFormData((prev) => ({
       ...prev,
       prendas: prev.prendas.includes(id)
@@ -116,21 +116,21 @@ export default function OutfitsPage() {
   };
 
   return (
-    <main>
+    <main className="page-container">
       {/* Cabecera */}
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "flex-start",
+          alignItems: "center",
           marginBottom: "32px",
         }}
       >
         <div>
           <h1
             style={{
-              fontSize: "22px",
-              fontWeight: "500",
+              fontSize: "26px",
+              fontWeight: "600",
               color: "var(--color-text)",
               marginBottom: "4px",
             }}
@@ -148,36 +148,16 @@ export default function OutfitsPage() {
         <button
           onClick={() => setMostrarFormulario(!mostrarFormulario)}
           aria-expanded={mostrarFormulario}
-          aria-controls="formulario-outfit"
-          aria-label={
-            mostrarFormulario
-              ? "Cancelar creación de outfit"
-              : "Crear nuevo outfit"
-          }
-          style={{
-            backgroundColor: mostrarFormulario
-              ? "var(--color-surface)"
-              : "var(--color-primary)",
-            color: mostrarFormulario ? "var(--color-text)" : "white",
-            border: mostrarFormulario
-              ? "1px solid var(--color-border)"
-              : "none",
-            borderRadius: "8px",
-            padding: "10px 18px",
-            fontSize: "14px",
-            fontWeight: "500",
-            cursor: "pointer",
-          }}
+          className={mostrarFormulario ? "btn-secondary" : "btn-primary"}
         >
           {mostrarFormulario ? "Cancelar" : "+ Crear outfit"}
         </button>
       </div>
 
-      {/* Formulario para crear outfit */}
+      {/* Formulario */}
       {mostrarFormulario && (
         <section
           id="formulario-outfit"
-          aria-label="Formulario para crear nuevo outfit"
           style={{
             backgroundColor: "var(--color-surface)",
             borderRadius: "12px",
@@ -189,7 +169,7 @@ export default function OutfitsPage() {
           <h2
             style={{
               fontSize: "16px",
-              fontWeight: "500",
+              fontWeight: "600",
               color: "var(--color-text)",
               marginBottom: "20px",
             }}
@@ -197,16 +177,10 @@ export default function OutfitsPage() {
             Nuevo outfit
           </h2>
           <form onSubmit={handleSubmit} noValidate>
-            {/* Nombre */}
             <div style={{ marginBottom: "16px" }}>
               <label style={labelStyle} htmlFor="nombre">
                 Nombre{" "}
-                <span
-                  aria-hidden="true"
-                  style={{ color: "var(--color-reciclar-text)" }}
-                >
-                  *
-                </span>
+                <span style={{ color: "var(--color-reciclar-text)" }}>*</span>
               </label>
               <input
                 id="nombre"
@@ -216,12 +190,10 @@ export default function OutfitsPage() {
                   setFormData({ ...formData, nombre: e.target.value })
                 }
                 placeholder="Ej: Look de oficina"
-                aria-required="true"
                 style={inputStyle}
               />
             </div>
 
-            {/* Descripción */}
             <div style={{ marginBottom: "20px" }}>
               <label style={labelStyle} htmlFor="descripcion">
                 Descripción
@@ -238,22 +210,24 @@ export default function OutfitsPage() {
               />
             </div>
 
-            {/* Selección de prendas */}
-            <div style={{ marginBottom: "20px" }}>
-              <p
-                id="prendas-label"
-                style={{ ...labelStyle, marginBottom: "8px" }}
-              >
-                Prendas del outfit ({formData.prendas.length} seleccionadas)
+            <div style={{ marginBottom: "24px" }}>
+              <p style={{ ...labelStyle, marginBottom: "12px" }}>
+                Prendas del outfit{" "}
+                <span
+                  style={{
+                    color: "var(--color-text-muted)",
+                    fontWeight: "400",
+                  }}
+                >
+                  ({formData.prendas.length} seleccionadas)
+                </span>
               </p>
               <div
-                role="group"
-                aria-labelledby="prendas-label"
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))",
-                  gap: "8px",
-                  maxHeight: "280px",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(110px, 1fr))",
+                  gap: "10px",
+                  maxHeight: "300px",
                   overflowY: "auto",
                   padding: "4px",
                 }}
@@ -263,51 +237,45 @@ export default function OutfitsPage() {
                   return (
                     <div
                       key={prenda._id}
-                      onClick={() => togglePrenda(prenda._id, prenda.nombre)}
+                      onClick={() => togglePrenda(prenda._id)}
                       role="checkbox"
                       aria-checked={seleccionada}
-                      aria-label={`${seleccionada ? "Quitar" : "Añadir"} ${prenda.nombre} del outfit`}
                       tabIndex={0}
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === " ") {
                           e.preventDefault();
-                          togglePrenda(prenda._id, prenda.nombre);
+                          togglePrenda(prenda._id);
                         }
                       }}
                       style={{
-                        borderRadius: "8px",
+                        borderRadius: "10px",
                         border: seleccionada
                           ? "2px solid var(--color-primary)"
                           : "1px solid var(--color-border)",
                         overflow: "hidden",
                         cursor: "pointer",
-                        opacity: seleccionada ? 1 : 0.7,
+                        opacity: seleccionada ? 1 : 0.65,
                         transition: "all 0.15s ease",
+                        backgroundColor: "var(--color-bg)",
                       }}
                     >
-                      <div
-                        style={{
-                          height: "80px",
-                          backgroundColor: "var(--color-border)",
-                          position: "relative",
-                        }}
-                      >
+                      <div style={{ height: "90px", position: "relative" }}>
                         <Image
                           src={
                             prenda.imagen ||
-                            "https://via.placeholder.com/120x80"
+                            "https://via.placeholder.com/110x90"
                           }
-                          alt={`Fotografía de ${prenda.nombre}`}
+                          alt={prenda.nombre}
                           fill
+                          sizes="110px"
                           style={{ objectFit: "cover" }}
                         />
                         {seleccionada && (
                           <div
-                            aria-hidden="true"
                             style={{
                               position: "absolute",
-                              top: "4px",
-                              right: "4px",
+                              top: "6px",
+                              right: "6px",
                               backgroundColor: "var(--color-primary)",
                               color: "white",
                               borderRadius: "50%",
@@ -316,17 +284,15 @@ export default function OutfitsPage() {
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
-                              fontSize: "10px",
-                              fontWeight: "600",
+                              fontSize: "11px",
+                              fontWeight: "700",
                             }}
                           >
-                            ok
+                            ✓
                           </div>
                         )}
                       </div>
-                      <div
-                        style={{ padding: "6px 8px", backgroundColor: "white" }}
-                      >
+                      <div style={{ padding: "6px 8px" }}>
                         <p
                           style={{
                             fontSize: "11px",
@@ -351,23 +317,14 @@ export default function OutfitsPage() {
               </div>
             </div>
 
-            {/* Botón para guardar */}
             <button
               type="submit"
               disabled={guardando}
-              aria-busy={guardando}
+              className="btn-primary"
               style={{
                 width: "100%",
                 padding: "12px",
-                borderRadius: "8px",
-                border: "none",
-                backgroundColor: guardando
-                  ? "var(--color-primary-light)"
-                  : "var(--color-primary)",
-                color: "white",
-                fontSize: "14px",
-                fontWeight: "500",
-                cursor: guardando ? "not-allowed" : "pointer",
+                opacity: guardando ? 0.7 : 1,
               }}
             >
               {guardando ? "Guardando..." : "Guardar outfit"}
@@ -380,7 +337,6 @@ export default function OutfitsPage() {
       {error && (
         <div
           role="alert"
-          aria-live="assertive"
           style={{
             backgroundColor: "var(--color-reciclar)",
             color: "var(--color-reciclar-text)",
@@ -398,19 +354,18 @@ export default function OutfitsPage() {
       {cargando && (
         <p
           role="status"
-          aria-live="polite"
           style={{ color: "var(--color-text-muted)", fontSize: "14px" }}
         >
           Cargando outfits...
         </p>
       )}
 
-      {/* Sin outfits */}
+      {/* Vacío */}
       {!cargando && !error && outfits.length === 0 && (
         <div
           style={{
             textAlign: "center",
-            padding: "60px 24px",
+            padding: "80px 24px",
             color: "var(--color-text-muted)",
           }}
         >
@@ -425,11 +380,10 @@ export default function OutfitsPage() {
 
       {/* Lista de outfits */}
       <section aria-label="Lista de outfits">
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <div style={{ display: "grid", gap: "16px" }}>
           {outfits.map((outfit) => (
             <article
               key={outfit._id}
-              aria-label={`Outfit: ${outfit.nombre}${outfit.favorito ? ", marcado como favorito" : ""}`}
               style={{
                 backgroundColor: "var(--color-surface)",
                 borderRadius: "12px",
@@ -437,6 +391,7 @@ export default function OutfitsPage() {
                   ? "1.5px solid var(--color-primary)"
                   : "0.5px solid var(--color-border)",
                 padding: "20px",
+                transition: "box-shadow 0.2s ease",
               }}
             >
               {/* Cabecera del outfit */}
@@ -446,6 +401,7 @@ export default function OutfitsPage() {
                   justifyContent: "space-between",
                   alignItems: "flex-start",
                   marginBottom: "16px",
+                  gap: "12px",
                 }}
               >
                 <div>
@@ -454,12 +410,13 @@ export default function OutfitsPage() {
                       display: "flex",
                       alignItems: "center",
                       gap: "8px",
+                      marginBottom: "4px",
                     }}
                   >
                     <h3
                       style={{
-                        fontSize: "16px",
-                        fontWeight: "500",
+                        fontSize: "17px",
+                        fontWeight: "600",
                         color: "var(--color-text)",
                       }}
                     >
@@ -467,17 +424,16 @@ export default function OutfitsPage() {
                     </h3>
                     {outfit.favorito && (
                       <span
-                        aria-label="Outfit favorito"
                         style={{
                           fontSize: "11px",
                           fontWeight: "500",
                           color: "var(--color-primary)",
-                          backgroundColor: "var(--color-primary-light)",
+                          backgroundColor: "var(--color-nuevo)",
                           padding: "2px 8px",
                           borderRadius: "99px",
                         }}
                       >
-                        Favorito
+                        ★ Favorito
                       </span>
                     )}
                   </div>
@@ -486,7 +442,7 @@ export default function OutfitsPage() {
                       style={{
                         fontSize: "13px",
                         color: "var(--color-text-muted)",
-                        marginTop: "2px",
+                        marginBottom: "4px",
                       }}
                     >
                       {outfit.descripcion}
@@ -496,41 +452,33 @@ export default function OutfitsPage() {
                     style={{
                       fontSize: "12px",
                       color: "var(--color-text-muted)",
-                      marginTop: "4px",
                     }}
                   >
                     {outfit.prendas?.length || 0}{" "}
                     {outfit.prendas?.length === 1 ? "prenda" : "prendas"}
                   </p>
                 </div>
-                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+
+                <div style={{ display: "flex", gap: "8px", flexShrink: 0 }}>
                   <button
                     onClick={() => toggleFavorito(outfit)}
                     aria-pressed={outfit.favorito}
-                    aria-label={`${outfit.favorito ? "Quitar de" : "Añadir a"} favoritos el outfit ${outfit.nombre}`}
-                    style={{
-                      fontSize: "12px",
-                      padding: "6px 12px",
-                      borderRadius: "6px",
-                      border: "1px solid var(--color-border)",
-                      backgroundColor: "transparent",
-                      color: "var(--color-text-muted)",
-                      cursor: "pointer",
-                    }}
+                    className="btn-secondary"
+                    style={{ fontSize: "12px", padding: "6px 12px" }}
                   >
-                    {outfit.favorito ? "Quitar favorito" : "Añadir favorito"}
+                    {outfit.favorito ? "★ Favorito" : "☆ Favorito"}
                   </button>
                   <button
                     onClick={() => eliminarOutfit(outfit._id, outfit.nombre)}
-                    aria-label={`Eliminar outfit ${outfit.nombre}`}
                     style={{
                       fontSize: "12px",
                       padding: "6px 12px",
-                      borderRadius: "6px",
+                      borderRadius: "8px",
                       border: "none",
                       backgroundColor: "var(--color-reciclar)",
                       color: "var(--color-reciclar-text)",
                       cursor: "pointer",
+                      fontWeight: "500",
                     }}
                   >
                     Eliminar
@@ -540,40 +488,32 @@ export default function OutfitsPage() {
 
               {/* Prendas del outfit */}
               {outfit.prendas?.length > 0 && (
-                <div
-                  aria-label={`Prendas del outfit ${outfit.nombre}`}
-                  style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}
-                >
+                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                   {outfit.prendas.map((prenda) => (
                     <div
                       key={prenda._id}
                       style={{
-                        width: "72px",
+                        width: "80px",
                         borderRadius: "8px",
                         overflow: "hidden",
                         border: "0.5px solid var(--color-border)",
                       }}
                     >
-                      <div
-                        style={{
-                          height: "72px",
-                          backgroundColor: "var(--color-border)",
-                          position: "relative",
-                        }}
-                      >
+                      <div style={{ height: "80px", position: "relative" }}>
                         <Image
                           src={
-                            prenda.imagen || "https://via.placeholder.com/72"
+                            prenda.imagen || "https://via.placeholder.com/80"
                           }
-                          alt={`Fotografía de ${prenda.nombre}`}
+                          alt={prenda.nombre}
                           fill
+                          sizes="80px"
                           style={{ objectFit: "cover" }}
                         />
                       </div>
                       <div
                         style={{
                           padding: "4px 6px",
-                          backgroundColor: "white",
+                          backgroundColor: "var(--color-bg)",
                         }}
                       >
                         <p
