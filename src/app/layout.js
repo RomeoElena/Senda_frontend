@@ -1,5 +1,6 @@
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
+import ScrollToTop from "@/components/layout/ScrollToTop";
 
 export const metadata = {
   title: "Senda — Tu armario digital",
@@ -16,6 +17,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="es">
       <body>
+        <ScrollToTop />
         <Navbar />
         {children}
         <footer>
