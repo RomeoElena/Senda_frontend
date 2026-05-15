@@ -123,7 +123,7 @@ export default function NuevaPrendaPage() {
           <div
             style={{
               width: "100%",
-              height: "360px",
+              height: "clamp(200px, 40vw, 360px)",
               backgroundColor: "white",
               border: "1.5px dashed var(--color-border)",
               borderRadius: "12px",
